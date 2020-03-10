@@ -1,3 +1,37 @@
+# Machine Learning on ServiceNow
+
+Perform your Machine Learning on any table inside ServiceNow and store the model for prediction at later stages. 
+
+`Step 1` : Choose table
+
+<img src="images/1.PNG" width="800">
+
+`Step 2` : Select Training Data and Output Data
+
+<img src="images/2.PNG" width="800">
+
+`Step3` : Select No. of Test Records to calculate accuracy. Also if you want to convert any labeled column to numerical one, use converters field. Use JavaScript in converters in the shown format.
+
+<img src="images/3.PNG" width="800">
+
+`Step 4` : Use charts to get insights from data
+
+<img src="images/4.PNG" width="800">
+
+`Step 5` : Select Algorithm, set learning rate, iterations and batch size and click train.
+
+<img src="images/5.PNG" width="800">
+
+`Step 6` : Wait for model to get trained and see the accuracy. Then save the model using Save Model button.
+
+<img src="images/7.PNG" width="800">
+
+`Step 7` : See the saved model inside the servicenow application menu and click 'preview usage script' to get the code for use inside other scripts. 
+
+<img src="images/8.PNG" width="800">
+
+
+
 # Generated files
 This repository contains generated files and a checksum.
 
