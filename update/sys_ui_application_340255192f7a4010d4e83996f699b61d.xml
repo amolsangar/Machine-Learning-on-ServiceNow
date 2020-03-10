@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update sys_domain="global" table="sys_ui_application">
+    <sys_ui_application action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <hint/>
+        <name>Machine Learning</name>
+        <order/>
+        <roles>x_248338_machine_l.saved_models_user</roles>
+        <sys_class_name>sys_ui_application</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2020-02-05 07:01:50</sys_created_on>
+        <sys_domain>global</sys_domain>
+        <sys_domain_path>/</sys_domain_path>
+        <sys_id>340255192f7a4010d4e83996f699b61d</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>Machine Learning</sys_name>
+        <sys_overrides/>
+        <sys_package display_value="Machine Learning" source="x_248338_machine_l">04bf6eec2ff6cc10d4e83996f699b629</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Machine Learning">04bf6eec2ff6cc10d4e83996f699b629</sys_scope>
+        <sys_update_name>sys_ui_application_340255192f7a4010d4e83996f699b61d</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2020-02-05 07:01:50</sys_updated_on>
+    </sys_ui_application>
+</record_update>

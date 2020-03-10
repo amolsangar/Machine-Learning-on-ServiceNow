@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sp_widget">
+    <sp_widget action="INSERT_OR_UPDATE">
+        <category>custom</category>
+        <client_script><![CDATA[function($scope, spUtil) {
+
+	var c = this;
+
+	$scope.location = {
+		displayValue: c.data.loc.name,
+		value: c.data.loc.sys_id,
+		name: 'location'
+	};
+
+	$scope.$on("field.change", function(evt, parms) {
+		if (parms.field.name == 'location')
+			c.data.setLocation = parms.newValue;
+		
+		c.server.update().then(function(response) {		
+			spUtil.update($scope);
+		})
+	});
+	
+}]]></client_script>
+        <controller_as>c</controller_as>
+        <css>/* fixes labels in editor */
+label {
+  margin: 0 !important;
+}</css>
+        <data_table>sp_instance</data_table>
+        <demo_data/>
+        <description/>
+        <docs/>
+        <field_list/>
+        <has_preview>true</has_preview>
+        <id>address_picker_2</id>
+        <internal>false</internal>
+        <link><![CDATA[function link(scope, element, attrs, controller) {  }]]></link>
+        <name>Address Picker 2</name>
+        <option_schema/>
+        <public>true</public>
+        <roles/>
+        <script><![CDATA[/*----------
+Developed by Nathan Firth
+http://newrocket.com
+http://serviceportal.io
+----------*/
+
+var locSysId = "";
+if (input.setLocation)
+	locSysId = input.setLocation;
+else
+	locSysId = gs.getUser().getRecord().getValue('location');
+
+var locGR = GlideRecord('cmn_location');
+locGR.get(locSysId);
+data.loc = {};
+$sp.getRecordDisplayValues(data.loc, locGR, 'sys_id,name,street,city,state,zip,country');
+
+
+]]></script>
+        <servicenow>false</servicenow>
+        <sys_class_name>sp_widget</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2020-02-03 07:16:56</sys_created_on>
+        <sys_id>964287202f7acc10d4e83996f699b691</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>Address Picker 2</sys_name>
+        <sys_package display_value="Machine Learning" source="x_248338_machine_l">04bf6eec2ff6cc10d4e83996f699b629</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Machine Learning">04bf6eec2ff6cc10d4e83996f699b629</sys_scope>
+        <sys_update_name>sp_widget_964287202f7acc10d4e83996f699b691</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2020-02-03 07:16:56</sys_updated_on>
+        <template><![CDATA[<div class="panel panel-default">
+  <div class="panel-heading">
+    <h4 class="panel-title">Location</h4>
+  </div>
+  <div class="panel-body">
+    <sn-record-picker field="location" table="'cmn_location'" display-field="'name'" value-field="'sys_id'" search-fields="'name'" page-size="100" ></sn-record-picker>
+    <form class="m-t form-horizontal" role="form">
+      <div class="form-group">
+        <label class="col-sm-2 control-label">Line 1</label>
+        <div class="col-sm-10">
+          <input type="text" placeholder="{{data.loc.street}}" class="form-control" readonly>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="col-sm-2 control-label">Line 2</label>
+        <div class="col-sm-10">
+          <input type="text" placeholder="Address Line 2" class="form-control" readonly>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="col-sm-2 control-label">City</label>
+        <div class="col-sm-10">
+          <input type="text" placeholder="{{data.loc.city}}" class="form-control" readonly>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="col-sm-2 control-label">State</label>
+        <div class="col-sm-4">
+          <input type="text" placeholder="{{data.loc.state}}" class="form-control" readonly>
+        </div>
+        <label class="col-sm-2 control-label">Postal Code</label>
+        <div class="col-sm-4">
+          <input type="text" placeholder="{{data.loc.zip}}" class="form-control" readonly>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="col-sm-2 control-label">Country</label>
+        <div class="col-sm-10">
+          <input type="text" placeholder="{{data.loc.country}}" class="form-control" readonly>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+]]></template>
+    </sp_widget>
+</record_update>

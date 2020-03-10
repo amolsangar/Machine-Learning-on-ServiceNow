@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_script_include">
+    <sys_script_include action="INSERT_OR_UPDATE">
+        <access>package_private</access>
+        <active>true</active>
+        <api_name>x_248338_machine_l.savedModel</api_name>
+        <caller_access/>
+        <client_callable>false</client_callable>
+        <description>Prediction method for saved model in Machine Learning module.</description>
+        <name>savedModel</name>
+        <script><![CDATA[var savedModel = Class.create();
+savedModel.prototype = {
+    initialize: function(number) {
+		var grSavedModel = new GlideRecord('x_248338_machine_l_saved_models');
+		grSavedModel.addQuery('number', '=', number);
+		grSavedModel.query();
+		
+		if(grSavedModel.next()) {
+			this.savedModel = grSavedModel;
+		}
+		else {
+			this.savedModel = null;
+		}
+    },
+	
+	getInputSequence: function() {
+		return this.savedModel.input_column_sequence;	
+	},
+	
+	softmax: function(arr) {
+		return arr.map(function(value,index) { 
+		  return Math.exp(value) / arr.map( function(y /*value*/){ return Math.exp(y) } ).reduce( function(a,b){ return a+b });
+		});
+	},
+
+	argMax: function(array) {
+	  return array.indexOf(Math.max.apply(Math, array));
+	},
+	
+	standardize: function(inputArr) {
+		var model = JSON.parse(this.savedModel.model);
+		var inputLength = this.getInputSequence().split(',').length;
+
+		var standardizedArrOfArr = [];
+		for(var i = 0; i < inputArr.length; i++) {
+			var input = inputArr[i];
+
+			if(inputLength != input.length) {
+				return "Input Length Mismatch";
+			}
+
+			var newInput = [1];     // Add one to start of array	
+			for(var x = 0; x < input.length; x++) {    // copy input to new input
+				newInput.push(input[x]);
+			}    
+
+			var standardizedArr = [];
+			for(var j = 0; j < newInput.length; j++){
+				var value = newInput[j] - model.mean[j];
+				value = value / model.standard_deviation[j];
+
+				standardizedArr.push(value);
+			}
+			standardizedArrOfArr.push(standardizedArr);
+			//gs.info(JSON.stringify(standardizedArrOfArr));
+		}
+		return standardizedArrOfArr;
+	},
+	
+	multiply: function(a, b) {
+	  var aNumRows = a.length, aNumCols = a[0].length,
+		  bNumRows = b.length, bNumCols = b[0].length,
+		  m = new Array(aNumRows);  // initialize array of rows
+	  for (var r = 0; r < aNumRows; ++r) {
+		m[r] = new Array(bNumCols); // initialize the current row
+		for (var c = 0; c < bNumCols; ++c) {
+		  m[r][c] = 0;             // initialize the current cell
+		  for (var i = 0; i < aNumCols; ++i) {
+			m[r][c] += a[r][i] * b[i][c];
+		  }
+		}
+	  }
+	  return m;
+	},
+
+	predict: function(inputArr) {
+		
+		if(this.savedModel.algorithm_used == "Linear Regression") {
+			var model = JSON.parse(this.savedModel.model);
+		
+			var standardizedArrOfArr = this.standardize(inputArr);
+			var result = this.multiply(standardizedArrOfArr, model.weights);
+			//var resultArr = [];
+			/*for(var k = 0; k < standardizedArrOfArr.length; k++) {
+				var result = 0;
+				for(var l = 0; l < standardizedArrOfArr[k].length; l++) {
+					result += (model.weights[l][0] * standardizedArrOfArr[k][l]);
+				}
+				resultArr.push([result]);
+			}*/
+
+			//return JSON.stringify(resultArr);
+			return result;
+		} 
+		else if(this.savedModel.algorithm_used == "Logistic Regression") {
+			var model = JSON.parse(this.savedModel.model);
+			
+			var standardizedArrOfArr = this.standardize(inputArr);
+			var result = this.multiply(standardizedArrOfArr, model.weights);
+			
+			var output = [];
+			for (var i in result) {
+				gs.info(softmax(result[i]));
+				gs.info(argMax(softmax(result[i])));
+				output.push([(argMax(softmax(result[i])))]);
+			}
+			gs.info(JSON.stringify(output));
+			return output;
+		}
+	},
+
+    type: 'savedModel'
+};]]></script>
+        <sys_class_name>sys_script_include</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2020-02-22 10:14:40</sys_created_on>
+        <sys_id>b1806db22f4f4050d4e83996f699b6d1</sys_id>
+        <sys_mod_count>50</sys_mod_count>
+        <sys_name>savedModel</sys_name>
+        <sys_package display_value="Machine Learning" source="x_248338_machine_l">04bf6eec2ff6cc10d4e83996f699b629</sys_package>
+        <sys_policy>read</sys_policy>
+        <sys_scope display_value="Machine Learning">04bf6eec2ff6cc10d4e83996f699b629</sys_scope>
+        <sys_update_name>sys_script_include_b1806db22f4f4050d4e83996f699b6d1</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2020-02-27 12:15:26</sys_updated_on>
+    </sys_script_include>
+</record_update>

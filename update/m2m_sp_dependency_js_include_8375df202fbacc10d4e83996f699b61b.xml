@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="m2m_sp_dependency_js_include">
+    <m2m_sp_dependency_js_include action="INSERT_OR_UPDATE">
+        <order>100</order>
+        <sp_dependency display_value="Lodash">8be49bec2f7acc10d4e83996f699b681</sp_dependency>
+        <sp_js_include display_value="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.15/lodash.min.js">4965dbec2f7acc10d4e83996f699b60b</sp_js_include>
+        <sys_class_name>m2m_sp_dependency_js_include</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2020-02-03 08:40:49</sys_created_on>
+        <sys_id>8375df202fbacc10d4e83996f699b61b</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>Lodash.https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.15/lodash.min.js</sys_name>
+        <sys_package display_value="Machine Learning" source="x_248338_machine_l">04bf6eec2ff6cc10d4e83996f699b629</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Machine Learning">04bf6eec2ff6cc10d4e83996f699b629</sys_scope>
+        <sys_update_name>m2m_sp_dependency_js_include_8375df202fbacc10d4e83996f699b61b</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2020-02-03 08:40:49</sys_updated_on>
+    </m2m_sp_dependency_js_include>
+</record_update>

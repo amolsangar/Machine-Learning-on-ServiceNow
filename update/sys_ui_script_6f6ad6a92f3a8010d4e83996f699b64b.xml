@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_ui_script">
+    <sys_ui_script action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <description/>
+        <global>false</global>
+        <name>x_248338_machine_l.load-csv.js</name>
+        <script><![CDATA[ /*jshint esnext: true */ 
+class LoadCSV {	
+	constructor(data, options) {
+		this.data = data;
+
+		this.options = Object.assign(
+			{ dataColumns : [], labelColumns : [], converters : {}, shuffle : false, splitTest : false },
+			options
+		);
+
+	}	
+	
+	extractColumns(data, columnNames) {
+	  const headers = _.first(data);
+	  const indexes = _.map(columnNames, column => headers.indexOf(column));
+	  const extracted = _.map(data, row => _.pullAt(row, indexes));
+	  return extracted;
+	}
+	
+	loadCSV() {
+	  this.data = _.map(this.data.split('\n'), d => d.split(','));
+	  this.data = _.dropRightWhile(this.data, val => _.isEqual(val, ['']));
+	  const headers = _.first(this.data);
+
+	  this.data = _.map(this.data, (row, index) => {
+		if (index === 0) {
+		  return row;
+		}
+		return _.map(row, (element, index) => {
+			if(this.options.converters != "{}") {
+				var conv = JSON.parse(this.options.converters);
+				conv = conv.replace(/&gt;/g,">");
+				conv = conv.replace(/&lt;/g,"<");
+				conv = JSON.parse(conv);
+
+			  if (conv[headers[index]]) {
+				var converted = conv[headers[index]];
+				converted = eval(converted);
+				converted = converted(element);
+				return _.isNaN(converted) ? element : converted;
+			  }
+
+				/*if(this.options.converters != "") {
+					var conv = JSON.parse(this.options.converters);
+					conv = JSON.parse(conv);
+					var keys = Object.keys(conv);
+					for (var x in keys) {
+						if(headers[index] == keys[x]) {
+							for(var y in conv[keys[x]]) {
+								if(y.toLowerCase() == element.toLowerCase()) {
+									return conv[keys[x]][y];								
+								}
+								//else
+									//return element;
+							}
+						}
+					}
+				}*/
+			}
+			  const result = parseFloat(element.replace('"', ''));
+			  return _.isNaN(result) ? element : result;
+			
+		});
+	  });
+		
+	  let labels = this.extractColumns(this.data, this.options.labelColumns);
+	  this.data = this.extractColumns(this.data, this.options.dataColumns);
+
+	  this.data.shift();
+	  labels.shift();
+		
+		//alert("before shuffle data - " + JSON.stringify(this.data));
+		//alert("before shuffle label- " + JSON.stringify(labels));
+	
+	  if (this.options.shuffle) {
+		/*var chance = new Chance('phrase');
+		this.data = chance.shuffle(this.data);
+		var chance2 = new Chance('phrase');
+		labels = chance2.shuffle(labels);*/
+		
+		 var data_labels = _.zip(this.data, labels);
+		 var chance = new Chance('phrase');
+		 data_labels = chance.shuffle(data_labels);
+		  
+		 var unzipped_data_label = _.unzip(data_labels);
+		 this.data = unzipped_data_label[0];
+		 labels = unzipped_data_label[1];
+	  }
+
+	  if (this.options.splitTest) {
+		const trainSize = _.isNumber(this.options.splitTest)
+		  ? this.options.splitTest
+		  : Math.floor(this.data.length / 2);
+
+		return {
+		  features: this.data.slice(trainSize),
+		  labels: labels.slice(trainSize),
+		  testFeatures: this.data.slice(0, trainSize),
+		  testLabels: labels.slice(0, trainSize)
+		};
+	  } else {
+		return { features: this.data, labels };
+	  }
+	}
+	
+	hello(){
+		alert("hello@loadCSV" + this.data);
+	}
+	
+}]]></script>
+        <script_name>load-csv.js</script_name>
+        <sys_class_name>sys_ui_script</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2020-02-06 06:59:34</sys_created_on>
+        <sys_id>6f6ad6a92f3a8010d4e83996f699b64b</sys_id>
+        <sys_mod_count>108</sys_mod_count>
+        <sys_name>x_248338_machine_l.load-csv.js</sys_name>
+        <sys_package display_value="Machine Learning" source="x_248338_machine_l">04bf6eec2ff6cc10d4e83996f699b629</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Machine Learning">04bf6eec2ff6cc10d4e83996f699b629</sys_scope>
+        <sys_update_name>sys_ui_script_6f6ad6a92f3a8010d4e83996f699b64b</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2020-03-08 18:00:12</sys_updated_on>
+        <ui_type>10</ui_type>
+        <use_scoped_format>false</use_scoped_format>
+    </sys_ui_script>
+</record_update>

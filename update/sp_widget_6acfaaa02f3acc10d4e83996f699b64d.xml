@@ -1,0 +1,675 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sp_widget">
+    <sp_widget action="INSERT_OR_UPDATE">
+        <category>custom</category>
+        <client_script><![CDATA[function($scope, spUtil) {
+  /* widget controller */
+  var c = this;
+	c.data.tableName = "x_248338_machine_l_cars";
+	c.data.CSV = "";
+	c.data.dataColsOptions = [];
+	c.data.dataColumns = "";
+	c.data.labelColumn = "";
+	c.data.operation = "";
+	c.data.next_step = "1";
+	c.trainLabel = "Train";
+	c.data.accuracy = 0;
+	c.data.SelColsOptions =[];
+	
+	c.type = ['Classification', 'Regression'];
+	c.classificationType = ['Logistic Regression'];
+	c.regressionType = ['Linear Regression'];
+	
+	c.getSelectedColumns = function() {
+		c.data.selectedColumns = c.data.dataColumns;
+		c.data.selectedColumns.push(c.data.labelColumn);
+		
+		var unique = c.data.selectedColumns.filter(function(item, i, ar) { return ar.indexOf(item) === i});
+		
+		c.data.selectedColumns = unique;
+		
+		c.data.SelColsOptions =[];
+		
+		for(var i=0;i<c.data.dataColsOptions.length;i++) {
+			for(var j=0;j<c.data.selectedColumns.length;j++) {
+				if(c.data.selectedColumns[j] == c.data.dataColsOptions[i].column_value) {
+					c.data.SelColsOptions.push(c.data.dataColsOptions[i]);
+				}
+			}
+		}
+		
+		c.data.dataColumns.pop();		
+	};
+	
+	c.getData = function() {
+		c.loading1 = true;
+		c.data.operation = "getCSVData";
+		c.server.update().then(function(){
+			c.loading1=false;
+			c.data.operation = "";				
+		});
+	};
+	
+	c.getColumnNames = function() {
+		c.data.operation = "getColumnNames";
+		c.server.update().then(function(){
+			c.data.operation = "";				
+		});
+	};
+	
+	c.changeLabel = function() {
+		c.trainLabel = "Re-train";
+	};
+	
+	c.save = function() {
+		//x_248338_machine_l_saved_models
+		//alert(document.getElementById('hidden_variable2').value);
+		c.data.model = document.getElementById('hidden_variable2').value;
+		var str = document.getElementById('accuracy').innerHTML;
+		str = str.toString();
+		var matches = str.match(/(\d+)/);
+		c.data.accuracy = matches[0];
+		c.data.operation = "saveModel";
+		c.server.update().then(function(){
+			c.data.operation = "";
+			c.data.hidden_variable2 = "";
+			
+			var msg = c.data.isModelSaved ? "Model successfully saved. Access it by going to Machine Learning Module." : "Model could not be saved.";
+			alert(msg);
+		})
+	};
+	
+	
+}]]></client_script>
+        <controller_as>c</controller_as>
+        <css/>
+        <data_table>sp_instance</data_table>
+        <demo_data/>
+        <description/>
+        <docs/>
+        <field_list/>
+        <has_preview>true</has_preview>
+        <id>ml_template</id>
+        <internal>false</internal>
+        <link><![CDATA[function link(scope, element, attrs, controller) { 
+
+ }]]></link>
+        <name>Machine Leaning Template</name>
+        <option_schema/>
+        <public>false</public>
+        <roles/>
+        <script><![CDATA[(function() {
+  /* populate the 'data' object */
+  /* e.g., data.table = $sp.getValue('table'); */
+	
+	if(input) {	
+		if(input.operation == "getColumnNames"){
+			var tableName = input.tableName;
+			data.dataColsOptions = getColumnNames(tableName);
+		}
+		
+		if(input.operation == "getCSVData"){
+			data.CSV = getCSVData();
+		}
+		
+		if(input.operation == "saveModel"){
+			var isInserted = saveModel();
+			if(isInserted) {
+				data.isModelSaved = true;
+			} else {
+				data.isModelSaved = false;		
+			}
+				
+		}
+	}
+	
+	function saveModel() {
+		var saveModelGR = new GlideRecord('x_248338_machine_l_saved_models');
+		saveModelGR.initialize();
+		saveModelGR.purpose = input.purpose;
+		saveModelGR.input_column_sequence = input.dataColumns.toString();
+		saveModelGR.converters = (input.converters) ? input.converters : "";
+		saveModelGR.accuracy = input.accuracy;
+		saveModelGR.type_of_learning = input.type.toString();
+		saveModelGR.algorithm_used = input.algorithm.toString();
+		saveModelGR.model = input.model;
+		return saveModelGR.insert();		
+	}
+	
+	function getCSVData() {
+		
+		if(input) {
+			var tableName = input.tableName;
+			var tableQuery = input.tableQuery;
+			var shuffle = input.shuffle;
+			var splitTest = input.splitTest;
+			var dataColumns = input.dataColumns.toString();
+			var dataColsArr = dataColumns.split(',');
+			dataColsArr.push(input.labelColumn.toString());
+
+			var gr = new GlideRecord(tableName);
+			if(tableQuery)
+				gr.addEncodedQuery(tableQuery);
+			//gr.setLimit(10);
+			gr.query();
+
+			var data = dataColsArr.toString() + "\n";		
+			while(gr.next()) 
+			{
+				var record = [];
+
+				for(var i = 0; i < dataColsArr.length; i++) {
+					record.push(gr.getValue(dataColsArr[i]));
+				}
+
+				var recordCSV = record.toString();
+				recordCSV += "\n";
+
+				data += recordCSV;
+
+			}		
+			//gs.addInfoMessage(data);
+
+			return data;
+		}
+	}
+	
+	function getColumnNames(tableName) {
+		if(tableName){
+			var arr_fields=[];
+			var fields = new GlideRecord('sys_dictionary');
+			fields.addQuery('name', tableName);
+
+			fields.addEncodedQuery('internal_type!=collection^ORinternal_type=NULL');//To ignore all the table dictionaries(optional)
+
+			fields.query();
+			while(fields.next())
+			{
+				var obj = {};
+				obj['column_label'] = fields.column_label.toString();
+				obj['column_value'] = fields.element.toString();
+				arr_fields.push(obj);
+				//arr_fields.push(fields.column_label.toString()+"("+fields.element.toString() + ")" );
+			}
+			
+			arr_fields.splice( arr_fields.column_value == "sys_id", 1 );
+			return arr_fields;
+		}
+	}
+	
+})();]]></script>
+        <servicenow>false</servicenow>
+        <sys_class_name>sp_widget</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2020-02-03 05:56:48</sys_created_on>
+        <sys_id>6acfaaa02f3acc10d4e83996f699b64d</sys_id>
+        <sys_mod_count>678</sys_mod_count>
+        <sys_name>Machine Leaning Template</sys_name>
+        <sys_package display_value="Machine Learning" source="x_248338_machine_l">04bf6eec2ff6cc10d4e83996f699b629</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Machine Learning">04bf6eec2ff6cc10d4e83996f699b629</sys_scope>
+        <sys_update_name>sp_widget_6acfaaa02f3acc10d4e83996f699b64d</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2020-03-08 18:14:34</sys_updated_on>
+        <template><![CDATA[<form name="MLform" ng-controller="MLController" novalidate>
+<div>
+  <script>
+    document.getElementById('hidden_variable').style.display = "none";
+    document.getElementById('plot').style.display = "none";
+    //document.getElementById('loadingDiv').style.display = "none";
+    
+    function unpack(rows, key) {
+    	return rows.map(function(row) { return row[key]; });
+    }
+    
+    function showChart() {
+      var chartType = document.getElementById('select_chart').value;
+      var colValue = document.getElementById('select_col').value;
+      
+      var dataObj = document.getElementById('hidden_variable').innerHTML;
+      dataObj = JSON.parse(dataObj);
+
+      var CSVObj = dataObj.CSV.split("\n").map(function(value) {
+        return value.split(",");
+      });
+
+      //alert(JSON.stringify(CSVObj));
+      var index = CSVObj[0].indexOf(colValue);
+      //alert(index);      
+      
+      if(chartType == "line_chart") {
+        
+        var CSVObjCopy = CSVObj;
+        CSVObjCopy.splice(0,1);
+
+        var y = CSVObjCopy.map(function(value) {
+        		return value[index]
+        	 });
+        
+        var trace1 = {
+          y: y,
+          type: 'scatter'
+        };
+
+        var data = [trace1];
+
+        Plotly.newPlot('plot', data);
+        document.getElementById('plot').style.display = "block";
+      }
+      else if(chartType == "violin_plot") {
+        
+        var CSVObjCopy = CSVObj;
+        CSVObjCopy.splice(0,1);
+
+        var y = CSVObjCopy.map(function(value) {
+        		return value[index]
+        	 });
+        
+      	var data = [{
+          type: 'violin',
+          y: y,
+          points: 'none',
+          box: {
+            visible: true
+          },
+          boxpoints: false,
+          line: {
+            color: 'black'
+          },
+          fillcolor: '#8dd3c7',
+          opacity: 0.6,
+          meanline: {
+            visible: true
+          },
+          x0: colValue
+        }]
+
+        var layout = {
+          title: "",
+          yaxis: {
+            zeroline: false
+          }
+        }
+
+        Plotly.newPlot('plot', data, layout);
+        document.getElementById('plot').style.display = "block";
+      }
+      else if(chartType == "box_plot") {
+        
+        var CSVObjCopy = CSVObj;
+        CSVObjCopy.splice(0,1);
+
+        var y = CSVObjCopy.map(function(value) {
+        		return value[index]
+        	 });
+        
+        var trace = {
+          y: y,
+          boxpoints: 'all',
+          jitter: 0.3,
+          pointpos: -1.8,
+          type: 'box'
+        };
+        
+        var data = [trace];
+        Plotly.newPlot( 'plot', data );
+        
+        document.getElementById('plot').style.display = "block";
+      }
+      else if(chartType == "histogram") {
+        
+        var CSVObjCopy = CSVObj;
+        CSVObjCopy.splice(0,1);
+        
+        var x = CSVObjCopy.map(function(value) {
+        		return value[index]
+        	 });
+        
+      	var trace = {
+            x: x,
+            type: 'histogram',
+          };
+        var data = [trace];
+        Plotly.newPlot('plot', data);  
+      }
+      else if(chartType == "table") {
+        var CSVObjCopy = CSVObj;
+        var headers = CSVObjCopy.splice(0,1);
+				var data = dataObj.CSV;
+        
+        var headerValues = [];
+        for (i = 0; i < headers[0].length; i++) {
+        	  headerValues[i] = [headers[0][i]];
+        }        
+        data = _.map(data.split('\n'), function(d){ return d.split(',')});
+        var noHeaderData = data.slice(1, data.length);
+        	        
+        var cellValues = [[1,2],[3,4]];
+        for (i = 0; i < headerValues.length; i++) {
+          var cellValue = unpack(noHeaderData, i);
+          cellValues[i] = cellValue;
+        }
+
+        var data = [{
+          type: 'table',
+          columnwidth: [600,600,800,800,800,800,1000,1000,1000],
+          columnorder: [0,1,2,3,4,5,6,7,8,9],
+          header: {
+            values: headerValues,
+            align: "center",
+            line: {width: 1, color: 'rgb(50, 50, 50)'},
+            fill: {color: ['rgb(235, 100, 230)']},
+            font: {family: "Arial", size: 8, color: "white"}
+          },
+          cells: {
+            values: cellValues,
+            align: ["center", "center"],
+            line: {color: "black", width: 1},
+            fill: {color: ['rgba(228, 222, 249, 0.65)','rgb(235, 193, 238)', 'rgba(228, 222, 249, 0.65)']},
+            font: {family: "Arial", size: 9, color: ["black"]}
+          }
+        }]
+
+        Plotly.newPlot('plot', data);
+        document.getElementById('plot').style.display = "block";
+      }
+    }
+    
+    function convertData() {
+      alert("Training started. Please dont press anything else.");
+      var dataObj = document.getElementById('hidden_variable').innerHTML;
+      dataObj = JSON.parse(dataObj);
+      if(dataObj.converters) {
+      	dataObj.converters = dataObj.converters.replace(/(\r\n|\n|\r)/gm, "");
+      }
+      
+      //alert("dataCol - " + dataObj.dataColumns);
+      const loadCSV = new LoadCSV(dataObj.CSV,{
+        shuffle: Boolean(dataObj.shuffle) ? Boolean(dataObj.shuffle) : false,
+        splitTest: dataObj.splitTest ? parseInt(dataObj.splitTest) : false,
+        dataColumns: dataObj.dataColumns,
+        labelColumns: [dataObj.labelColumn],
+        converters: (dataObj.converters) ? JSON.stringify(dataObj.converters) : "{}"
+      });
+
+      var resp = loadCSV.loadCSV();
+      var features = resp.features;
+      var labels = resp.labels;
+      if(resp.testFeatures && resp.testLabels) {
+        var testFeatures = resp.testFeatures;
+        var testLabels = resp.testLabels;
+      }
+      
+      var isLabelColumn = false;
+      if(features && labels && testFeatures && testLabels) {
+        
+        if(dataObj.converters) {
+          var conv = JSON.parse(dataObj.converters);
+          for(x in conv) {
+            if(x == dataObj.labelColumn.toString()) {
+            	isLabelColumn = true;
+              break;
+            }           
+          }
+        }
+        
+         if(isLabelColumn) {
+          train(features, _.flatMap(labels), testFeatures, _.flatMap(testLabels), dataObj.learningRate, dataObj.iterations, dataObj.batchSize);
+        }else {
+        	train(features, labels, testFeatures, testLabels, dataObj.learningRate, dataObj.iterations, dataObj.batchSize);        	
+        }
+
+      }
+    }
+    
+    function train(features, labels, testFeatures, testLabels, learningRate, iterations, batchSize) {      
+      //alert(JSON.stringify(features));
+      //alert(JSON.stringify(labels));
+      var algoName = document.getElementById('algorithm').value;
+      if(algoName == 'Linear Regression') {
+        const regression = new LinearRegression(features, labels, {
+          learningRate: learningRate,
+          iterations: iterations,
+          batchSize: batchSize
+        });
+
+        regression.train();
+        const r2 = regression.test(testFeatures, testLabels);
+
+        document.getElementById('accuracy').innerHTML = "Accuracy Score - " + Math.ceil(r2 * 100);
+
+        var model = regression.getModel();
+        document.getElementById('hidden_variable2').value = JSON.stringify(model);
+        /*regression.predict([[307, 130]]).print();*/
+      }
+      else if(algoName == 'Logistic Regression') {        
+        const regression = new LogisticRegression(features, labels, {
+          learningRate: learningRate,
+          iterations: iterations,
+          batchSize: batchSize
+        });
+
+        regression.train();
+        const pred_score = regression.test(testFeatures, testLabels);
+
+        document.getElementById('accuracy').innerHTML = "Accuracy Score - " + Math.ceil(pred_score * 100);
+
+        var model = regression.getModel();
+        document.getElementById('hidden_variable2').value = JSON.stringify(model);        
+      }
+      
+      alert("Training Completed!");
+    }
+    
+  </script>
+
+  <div class="form-group col-md-12">
+    <h3>
+      <b>
+      Machine Learning 
+      </b>
+    </h3>
+  </div>
+  <p id="hidden_variable" ng-model="c.data.hidden_variable" ng-if="c.data">{{c.data}}</p>
+  <input type='hidden' id="hidden_variable2" ng-model="c.data.hidden_variable2" value={{c.data.hidden_variable2}}>
+  <!--div style="text-align: center;">
+    <button type="submit" class="btn btn-success" ng-click="c.save();">Save Model</button>  
+  </div-->
+  
+  <div id="step_1" ng-if="c.data.next_step == 1">
+    
+    <div class="form-group col-md-12">
+      <label for="TableName">Table Name *</label>
+      <input ng-model="c.data.tableName" type="text" class="form-control" name="tableName" id="tableName" aria-describedby="tableNameHelp" placeholder="Enter Table Name" required>
+      <span ng-show="MLform.tableName.$touched && MLform.tableName.$error.required" class="pull-right" style="color:red;">Required.</span>
+      <small id="TableNameHelp" class="form-text text-muted">Table name on which to perform learing.</small>
+    </div>
+    
+    <div ng-if="c.data.tableName" class="form-group col-md-12">
+      <button type="submit" class="btn btn-info pull-right" ng-click="c.getColumnNames();">Next</button>
+    </div>
+    
+    <div ng-if="c.data.dataColsOptions.length" class="form-group">
+      <div class="form-group col-md-12">
+        <label for="DataColumns">Data Columns *</label>
+        <!--input ng-model="c.data.dataColumns" type="text" class="form-control" id="dataColumns" aria-describedby="dataColumnsHelp" placeholder="Data Columns"-->
+        <select multiple class="form-control" id="dataColumns" name="dataColumns" ng-model="c.data.dataColumns" required>
+          <option ng-repeat="option in c.data.dataColsOptions" ng-value="option.column_value">{{option.column_label}}</option>
+        </select>
+        <span ng-show="MLform.dataColumns.$touched && MLform.dataColumns.$error.required" class="pull-right" style="color:red;">Required.</span>
+        <small id="dataColumnsHelp" class="form-text text-muted">Training Data Columns</small>
+      </div>
+
+      <div class="form-group col-md-12">
+        <label for="LabelColumn">Label Column *</label>
+        <!--input ng-model="c.data.labelColumn" type="text" class="form-control" id="labelColumn" aria-describedby="labelColumnHelp" placeholder="Label Column"-->
+        <select class="form-control" id="labelColumn" name="labelColumn" ng-model="c.data.labelColumn" required>
+          <option ng-repeat="option in c.data.dataColsOptions" ng-value="option.column_value">{{option.column_label}}</option>
+        </select>
+        <span ng-show="MLform.labelColumn.$touched && MLform.labelColumn.$error.required" class="pull-right" style="color:red;">Required.</span>
+        <small id="labelColumnlHelp" class="form-text text-muted">Output Label</small>
+      </div>
+      
+      <div class="form-group col-md-12">
+        <label for="tableQuery">Table Query(if any)</label>
+        <input ng-model="c.data.tableQuery" type="text" class="form-control" id="tableQuery" name="tableQuery" placeholder="Table Query">
+        <small id="tableQueryHelp" class="form-text text-muted">ServiceNow Query Builder - Limit Records</small>
+      </div>
+    </div>
+
+    <div ng-if="c.data.dataColumns && c.data.labelColumn" class="form-group col-md-12">
+      <button type="submit" class="btn btn-info pull-right" ng-click="c.getData(); c.data.next_step=2;">Next</button>
+    </div>
+  </div>
+  
+  <div id="step_2" ng-if="c.data.next_step == 2">
+    <div id="tableDisplayName">
+      <h4> 
+      <b>
+        Table - {{c.data.tableName}}
+      </b>
+    </h4>
+    </div>
+    
+    <div class="form-group col-md-6">
+      <label for="Shuffle">Shuffle *</label>
+      <select ng-model="c.data.shuffle" id="shuffle" name="shuffle" class="form-control" required>
+        <option value="true">True</option>
+        <option value="">False</option>
+      </select>
+    	<small id="shuffleHelp" class="form-text text-muted">Shuffle Data before training</small>
+    </div>
+
+    <div class="form-group col-md-6">
+      <label for="splitTest">Split Test Records *</label>
+      <input ng-model="c.data.splitTest" type="number" class="form-control" id="splitTest" name="splitTest" placeholder="Split Test Records" required>
+      <span ng-show="MLform.splitTest.$touched && MLform.splitTest.$error.required" class="pull-right" style="color:red;">Required.</span>
+      <small id="splitTestHelp" class="form-text text-muted">TestSet Size</small>
+    </div>
+    
+    <div class="form-group col-md-12">
+      <label for="converters">Converters</label>
+      <textarea ng-model="c.data.converters" rows="5" class="form-control" id="converters" name="converters" aria-describedby="convertersHelp" placeholder="{
+  internal_name_of_column: (value) => {
+    return value === 'TRUE' ? [0,1] : [1,0];
+  }
+}">
+      </textarea>
+      <small id="convertersHelp" class="form-text text-muted">Use JS to convert labeled data to numerical one.</small>
+      <small id="convertersHelp" class="form-text text-muted">Labeled column needs be an array.</small>
+      <small id="convertersHelp" class="form-text text-muted">Other columns need to return numeric data only.</small>
+      
+    </div>
+    
+    <div ng-model="c.loading1" class="form-group col-md-12" style="text-align: center;">
+      <img ng-show="c.loading1" src="myLoading.svg" width="32" height="32"/>
+    </div>
+    
+    <div class="form-group col-md-12">
+      <button type="submit" class="btn btn-info" ng-click="c.data.next_step=1;">Back</button>  
+      <button type="submit" class="btn btn-info pull-right" ng-click="c.data.next_step=3; c.getSelectedColumns();">Next</button>
+    </div>
+  </div>
+  
+  <div id="step_3" ng-if="c.data.next_step == 3">
+    
+    <div class="form-group col-md-6">
+      <label for="select_col">Select Column</label>
+      <select ng-model="c.data.select_col" id="select_col" name="select_col" class="form-control">
+        <option ng-repeat="option in c.data.SelColsOptions" ng-value="option.column_value">{{option.column_label}}</option>
+      </select>
+    </div>
+    
+    <div class="form-group col-md-6">
+      <label for="select_chart">Select Chart</label>
+      <select ng-model="c.data.select_chart" id="select_chart" name="select_chart" class="form-control">
+        <option value="line_chart">Line Chart</option>
+        <option value="violin_plot">Violin Plot</option>
+        <option value="box_plot">Box Plot</option>
+        <option value="table">Table</option>
+        <option value="histogram">Histogram</option>
+      </select>
+    </div>
+    
+    <div class="form-group col-md-6">
+      <button type="button" class="btn btn-info" onclick="showChart();">Show Chart</button>  
+    </div>
+    
+    <div id="plot" class="form-group col-md-6" style="margin-top:5px;width:1000px;height:450px;"></div>
+    
+    <div class="form-group col-md-12">
+      <button type="submit" class="btn btn-info" ng-click="c.data.next_step=2;">Back</button>  
+      <button type="submit" class="btn btn-info pull-right" ng-click="c.data.next_step=4;">Next</button>
+    </div>
+  </div>
+  
+  <div id="step_4" ng-if="c.data.next_step == 4">
+    <div class="form-group col-md-12">
+      <label for="type">Select Type *</label>
+      <select ng-model="c.data.type" id="type" name="type" class="form-control" required>
+        <option ng-repeat="type in c.type">{{type}}</option>
+      </select>    
+      <span ng-show="MLform.type.$touched && MLform.type.$error.required" class="pull-right" style="color:red;">Required.</span>
+      <small id="typeHelp" class="form-text text-muted">Machine learning type to perform</small>
+    </div>
+
+    <div ng-if="c.data.type" class="form-group col-md-12">
+      <label for="algorithm">Select Algorithm *</label>
+      <select class="form-control" id="algorithm" name="algorithm" ng-model="c.data.algorithm" required>
+        <option ng-if='c.data.type == "Classification"' ng-repeat="algo in c.classificationType">{{algo}}</option>
+        <option ng-if='c.data.type == "Regression"' ng-repeat="algo in c.regressionType">{{algo}}</option>
+      </select>
+      <span ng-show="MLform.algorithm.$touched && MLform.algorithm.$error.required" class="pull-right" style="color:red;">Required.</span>
+      <small id="algorithmHelp" class="form-text text-muted">Machine learning algorithm to perform</small>
+    </div>
+
+    <div class="form-group col-md-6">
+      <label for="learningRate">Learning Rate *</label>
+      <input ng-model="c.data.learningRate" type="number" step="0.0001" class="form-control" id="learningRate" name="learningRate" aria-describedby="learningRateHelp" placeholder="Learning Rate" required>
+      <span ng-show="MLform.learningRate.$touched && MLform.learningRate.$error.required" class="pull-right" style="color:red;">Required.</span>
+      <small id="learningRateHelp" class="form-text text-muted">Good values to start- 0.0001, 0.001, 0.01, 0.1, 1, 10</small>
+    </div>
+
+    <div class="form-group col-md-6">
+      <label for="iterations">Iterations *</label>
+      <input ng-model="c.data.iterations" type="number" class="form-control" id="iterations" name="iterations" aria-describedby="iterationsHelp" placeholder="Number of Iterations" required>
+      <span ng-show="MLform.iterations.$touched && MLform.iterations.$error.required" class="pull-right" style="color:red;">Required.</span>
+      <small id="iterationsHelp" class="form-text text-muted">Number of iterations to run on training data.</small>
+    </div>
+
+    <div class="form-group col-md-12">
+      <label for="batchSize">Batch Size *</label>
+      <input ng-model="c.data.batchSize" type="number" class="form-control" id="batchSize" name="batchSize" aria-describedby="batchSizeHelp" placeholder="Batch Size" required>
+      <span ng-show="MLform.batchSize.$touched && MLform.batchSize.$error.required" class="pull-right" style="color:red;">Required.</span>
+      <small id="batchSizeHelp" class="form-text text-muted">Batch size to perform learning</small>
+    </div>
+    
+    <div class="form-group col-md-12">
+      <label for="TableName">Purpose *</label>
+      <input ng-model="c.data.purpose" type="text" class="form-control" id="purpose" name="purpose" aria-describedby="purposeHelp" placeholder="Purpose" required>
+      <span ng-show="MLform.purpose.$touched && MLform.purpose.$error.required" class="pull-right" style="color:red;">Required.</span>
+      <small id="purposeHelp" class="form-text text-muted">Purpose of model</small>
+    </div>
+    
+    <!--div id="loadingDiv" class="form-group col-md-12" style="text-align: center;">
+      <img src="myLoading.svg" width="32" height="32"/>
+    </div-->
+    
+    <div class="form-group col-md-12" style="text-align: center;" class="text-center" style="color:darkblue">
+    	<p id="accuracy"></p>
+    </div>
+		
+    <div class="form-group col-md-12">
+      <button type="submit" class="btn btn-info" ng-click="c.data.next_step=3;">Back</button>  
+    	<button type="submit" id="trainBtn" class="btn btn-primary pull-right" onclick="convertData()" ng-click="c.changeLabel()" ng-disabled="MLform.$invalid">{{c.trainLabel}}</button>
+    </div>
+    
+    <div style="text-align: center;">
+      <button ng-if="c.trainLabel == 'Re-train'" type="submit" class="btn btn-success" ng-click="c.save();">Save Model</button>  
+    </div>
+        
+  </div>
+
+</div>
+</form>]]></template>
+    </sp_widget>
+</record_update>

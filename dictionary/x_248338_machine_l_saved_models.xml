@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?><database>
+    <element label="Saved Models" max_length="40" name="x_248338_machine_l_saved_models" type="collection">
+        <element label="Accuracy" max_length="100" name="accuracy" read_only="true" type="string"/>
+        <element label="Algorithm Used" max_length="100" name="algorithm_used" read_only="true" type="string"/>
+        <element label="Converters" max_length="1000" name="converters" read_only="true" type="string"/>
+        <element label="Input Column Sequence" max_length="1000" name="input_column_sequence" read_only="true" type="string"/>
+        <element label="Model" max_length="10000" name="model" read_only="true" type="script"/>
+        <element attributes="ignore_filter_on_new=true" default="javascript:global.getNextObjNumberPadded();" label="Number" max_length="40" name="number" type="string"/>
+        <element label="Purpose" max_length="1000" name="purpose" read_only="true" type="string"/>
+        <element label="Type of Learning" max_length="100" name="type_of_learning" read_only="true" type="string"/>
+    </element>
+</database>
