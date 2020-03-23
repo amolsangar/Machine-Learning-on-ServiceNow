@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_package_dependency_m2m">
+    <sys_package_dependency_m2m action="INSERT_OR_UPDATE">
+        <dependency display_value="System Import Sets" source="com.glide.system_import_set">92ba9d155d121300651727c3e282e867</dependency>
+        <min_version>1.0.0</min_version>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2020-03-23 08:27:23</sys_created_on>
+        <sys_id>0858ab942f7f0810d4e83996f699b6ab</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_package display_value="Machine Learning" source="x_248338_machine_l">04bf6eec2ff6cc10d4e83996f699b629</sys_package>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2020-03-23 08:27:23</sys_updated_on>
+    </sys_package_dependency_m2m>
+</record_update>

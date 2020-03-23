@@ -17,6 +17,7 @@
         <number_ref display_value="MDL">06114dba2fcb4050d4e83996f699b6ef</number_ref>
         <provider_class/>
         <read_access>true</read_access>
+        <scriptable_table>false</scriptable_table>
         <super_class/>
         <sys_class_code/>
         <sys_class_name>sys_db_object</sys_class_name>

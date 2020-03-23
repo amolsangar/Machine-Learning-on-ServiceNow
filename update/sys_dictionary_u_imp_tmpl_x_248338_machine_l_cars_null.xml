@@ -48,15 +48,15 @@
         <sys_class_name>sys_dictionary</sys_class_name>
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2020-02-22 07:44:35</sys_created_on>
-        <sys_id>74deb03a2fcb4050d4e83996f699b64e</sys_id>
+        <sys_id>0c58ab942f7f0810d4e83996f699b6af</sys_id>
         <sys_mod_count>0</sys_mod_count>
         <sys_name>u_imp_tmpl_x_248338_machine_l_cars</sys_name>
         <sys_package display_value="Machine Learning" source="x_248338_machine_l">04bf6eec2ff6cc10d4e83996f699b629</sys_package>
         <sys_policy/>
         <sys_scope display_value="Machine Learning">04bf6eec2ff6cc10d4e83996f699b629</sys_scope>
-        <sys_update_name>sys_dictionary_u_imp_tmpl_x_248338_machine_l_cars_null</sys_update_name>
+        <sys_update_name>sys_dictionary_u_imp_tmpl_x_248338_machine_l_cars_NULL</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2020-02-22 07:44:35</sys_updated_on>
+        <sys_updated_on>2020-03-23 08:27:25</sys_updated_on>
         <table_reference>false</table_reference>
         <text_index>false</text_index>
         <unique>false</unique>

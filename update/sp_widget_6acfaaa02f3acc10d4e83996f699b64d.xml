@@ -4,7 +4,8 @@
         <client_script><![CDATA[function($scope, spUtil) {
   /* widget controller */
   var c = this;
-	c.data.tableName = "x_248338_machine_l_cars";
+	//c.data.tableName = "x_248338_machine_l_cars";
+	c.data.tableName = "";
 	c.data.CSV = "";
 	c.data.dataColsOptions = [];
 	c.data.dataColumns = "";
@@ -74,7 +75,7 @@
 			c.data.hidden_variable2 = "";
 			
 			var msg = c.data.isModelSaved ? "Model successfully saved. Access it by going to Machine Learning Module." : "Model could not be saved.";
-			alert(msg);
+			Swal.fire(msg);
 		})
 	};
 	
@@ -202,21 +203,21 @@
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2020-02-03 05:56:48</sys_created_on>
         <sys_id>6acfaaa02f3acc10d4e83996f699b64d</sys_id>
-        <sys_mod_count>678</sys_mod_count>
+        <sys_mod_count>690</sys_mod_count>
         <sys_name>Machine Leaning Template</sys_name>
         <sys_package display_value="Machine Learning" source="x_248338_machine_l">04bf6eec2ff6cc10d4e83996f699b629</sys_package>
         <sys_policy/>
         <sys_scope display_value="Machine Learning">04bf6eec2ff6cc10d4e83996f699b629</sys_scope>
         <sys_update_name>sp_widget_6acfaaa02f3acc10d4e83996f699b64d</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2020-03-08 18:14:34</sys_updated_on>
+        <sys_updated_on>2020-03-23 08:05:17</sys_updated_on>
         <template><![CDATA[<form name="MLform" ng-controller="MLController" novalidate>
 <div>
   <script>
     document.getElementById('hidden_variable').style.display = "none";
     document.getElementById('plot').style.display = "none";
     //document.getElementById('loadingDiv').style.display = "none";
-    
+        
     function unpack(rows, key) {
     	return rows.map(function(row) { return row[key]; });
     }
@@ -375,50 +376,51 @@
     }
     
     function convertData() {
-      alert("Training started. Please dont press anything else.");
-      var dataObj = document.getElementById('hidden_variable').innerHTML;
-      dataObj = JSON.parse(dataObj);
-      if(dataObj.converters) {
-      	dataObj.converters = dataObj.converters.replace(/(\r\n|\n|\r)/gm, "");
-      }
-      
-      //alert("dataCol - " + dataObj.dataColumns);
-      const loadCSV = new LoadCSV(dataObj.CSV,{
-        shuffle: Boolean(dataObj.shuffle) ? Boolean(dataObj.shuffle) : false,
-        splitTest: dataObj.splitTest ? parseInt(dataObj.splitTest) : false,
-        dataColumns: dataObj.dataColumns,
-        labelColumns: [dataObj.labelColumn],
-        converters: (dataObj.converters) ? JSON.stringify(dataObj.converters) : "{}"
-      });
-
-      var resp = loadCSV.loadCSV();
-      var features = resp.features;
-      var labels = resp.labels;
-      if(resp.testFeatures && resp.testLabels) {
-        var testFeatures = resp.testFeatures;
-        var testLabels = resp.testLabels;
-      }
-      
-      var isLabelColumn = false;
-      if(features && labels && testFeatures && testLabels) {
-        
+      Swal.fire("Training started", "Please dont press anything else", "info").then((data) => {
+      	var dataObj = document.getElementById('hidden_variable').innerHTML;
+        dataObj = JSON.parse(dataObj);
         if(dataObj.converters) {
-          var conv = JSON.parse(dataObj.converters);
-          for(x in conv) {
-            if(x == dataObj.labelColumn.toString()) {
-            	isLabelColumn = true;
-              break;
-            }           
-          }
-        }
-        
-         if(isLabelColumn) {
-          train(features, _.flatMap(labels), testFeatures, _.flatMap(testLabels), dataObj.learningRate, dataObj.iterations, dataObj.batchSize);
-        }else {
-        	train(features, labels, testFeatures, testLabels, dataObj.learningRate, dataObj.iterations, dataObj.batchSize);        	
+          dataObj.converters = dataObj.converters.replace(/(\r\n|\n|\r)/gm, "");
         }
 
-      }
+        //alert("dataCol - " + dataObj.dataColumns);
+        const loadCSV = new LoadCSV(dataObj.CSV,{
+          shuffle: Boolean(dataObj.shuffle) ? Boolean(dataObj.shuffle) : false,
+          splitTest: dataObj.splitTest ? parseInt(dataObj.splitTest) : false,
+          dataColumns: dataObj.dataColumns,
+          labelColumns: [dataObj.labelColumn],
+          converters: (dataObj.converters) ? JSON.stringify(dataObj.converters) : "{}"
+        });
+
+        var resp = loadCSV.loadCSV();
+        var features = resp.features;
+        var labels = resp.labels;
+        if(resp.testFeatures && resp.testLabels) {
+          var testFeatures = resp.testFeatures;
+          var testLabels = resp.testLabels;
+        }
+
+        var isLabelColumn = false;
+        if(features && labels && testFeatures && testLabels) {
+
+          if(dataObj.converters) {
+            var conv = JSON.parse(dataObj.converters);
+            for(x in conv) {
+              if(x == dataObj.labelColumn.toString()) {
+                isLabelColumn = true;
+                break;
+              }           
+            }
+          }
+
+           if(isLabelColumn) {
+            train(features, _.flatMap(labels), testFeatures, _.flatMap(testLabels), dataObj.learningRate, dataObj.iterations, dataObj.batchSize);
+          }else {
+            train(features, labels, testFeatures, testLabels, dataObj.learningRate, dataObj.iterations, dataObj.batchSize);        	
+          }
+
+        }
+      })
     }
     
     function train(features, labels, testFeatures, testLabels, learningRate, iterations, batchSize) {      
@@ -457,7 +459,7 @@
         document.getElementById('hidden_variable2').value = JSON.stringify(model);        
       }
       
-      alert("Training Completed!");
+      Swal.fire("Training Completed!", "", "success");
     }
     
   </script>

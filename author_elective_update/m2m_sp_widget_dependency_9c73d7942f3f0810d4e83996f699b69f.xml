@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="m2m_sp_widget_dependency">
+    <m2m_sp_widget_dependency action="DELETE">
+        <sp_dependency display_value="SweetAlert2">25729f302fe30050d4e83996f699b697</sp_dependency>
+        <sp_widget display_value="Machine Leaning Template">6acfaaa02f3acc10d4e83996f699b64d</sp_widget>
+        <sys_class_name>m2m_sp_widget_dependency</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2020-03-23 06:56:12</sys_created_on>
+        <sys_id>9c73d7942f3f0810d4e83996f699b69f</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>SweetAlert2.Machine Leaning Template</sys_name>
+        <sys_package display_value="Machine Learning" source="x_248338_machine_l">04bf6eec2ff6cc10d4e83996f699b629</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Machine Learning">04bf6eec2ff6cc10d4e83996f699b629</sys_scope>
+        <sys_update_name>m2m_sp_widget_dependency_9c73d7942f3f0810d4e83996f699b69f</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2020-03-23 06:56:12</sys_updated_on>
+    </m2m_sp_widget_dependency>
+    <sys_update_version action="INSERT_OR_UPDATE">
+        <action>DELETE</action>
+        <application display_value="Machine Learning">04bf6eec2ff6cc10d4e83996f699b629</application>
+        <file_path/>
+        <instance_id>c1384c9bdb891b0089535d00cf961998</instance_id>
+        <instance_name>dev54294</instance_name>
+        <name>m2m_sp_widget_dependency_9c73d7942f3f0810d4e83996f699b69f</name>
+        <payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update table="m2m_sp_widget_dependency"><m2m_sp_widget_dependency action="INSERT_OR_UPDATE"><sp_dependency display_value="SweetAlert2">25729f302fe30050d4e83996f699b697</sp_dependency><sp_widget display_value="Machine Leaning Template">6acfaaa02f3acc10d4e83996f699b64d</sp_widget><sys_class_name>m2m_sp_widget_dependency</sys_class_name><sys_created_by>admin</sys_created_by><sys_created_on>2020-03-23 06:56:12</sys_created_on><sys_id>9c73d7942f3f0810d4e83996f699b69f</sys_id><sys_mod_count>0</sys_mod_count><sys_name>SweetAlert2.Machine Leaning Template</sys_name><sys_package display_value="Machine Learning" source="x_248338_machine_l">04bf6eec2ff6cc10d4e83996f699b629</sys_package><sys_policy/><sys_scope display_value="Machine Learning">04bf6eec2ff6cc10d4e83996f699b629</sys_scope><sys_update_name>m2m_sp_widget_dependency_9c73d7942f3f0810d4e83996f699b69f</sys_update_name><sys_updated_by>admin</sys_updated_by><sys_updated_on>2020-03-23 06:56:12</sys_updated_on></m2m_sp_widget_dependency></record_update>]]></payload>
+        <payload_hash>-646342204</payload_hash>
+        <record_name>SweetAlert2.Machine Leaning Template</record_name>
+        <reverted_from/>
+        <source>aa725b542f3f0810d4e83996f699b673</source>
+        <source_table>sys_update_set</source_table>
+        <state>current</state>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2020-03-23 06:56:12</sys_created_on>
+        <sys_id>5873d7942f3f0810d4e83996f699b6a3</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_recorded_at>171062d6e680000001</sys_recorded_at>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2020-03-23 06:56:12</sys_updated_on>
+        <type>Widget Dependency</type>
+        <update_guid>5073d794d53f0810243061fe0fffbba3</update_guid>
+        <update_guid_history>5073d794d53f0810243061fe0fffbba3:-646342204</update_guid_history>
+    </sys_update_version>
+    <sys_metadata_delete action="INSERT_OR_UPDATE">
+        <sys_audit_delete display_value="Record deleted 23/03/2020 08:15:50">3ea563502f7f0810d4e83996f699b625</sys_audit_delete>
+        <sys_class_name>sys_metadata_delete</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2020-03-23 08:15:50</sys_created_on>
+        <sys_db_object display_value="" name="m2m_sp_widget_dependency">m2m_sp_widget_dependency</sys_db_object>
+        <sys_id>13d0e19fff4945c8b213c28294c90490</sys_id>
+        <sys_metadata>9c73d7942f3f0810d4e83996f699b69f</sys_metadata>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>SweetAlert2.Machine Leaning Template</sys_name>
+        <sys_package display_value="Machine Learning" source="x_248338_machine_l">04bf6eec2ff6cc10d4e83996f699b629</sys_package>
+        <sys_parent/>
+        <sys_policy/>
+        <sys_scope display_value="Machine Learning">04bf6eec2ff6cc10d4e83996f699b629</sys_scope>
+        <sys_scope_delete display_value="">2c3b29e4a36549d38bbd957071cc9d31</sys_scope_delete>
+        <sys_update_name>m2m_sp_widget_dependency_9c73d7942f3f0810d4e83996f699b69f</sys_update_name>
+        <sys_update_version display_value="m2m_sp_widget_dependency_9c73d7942f3f0810d4e83996f699b69f">5873d7942f3f0810d4e83996f699b6a3</sys_update_version>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2020-03-23 08:15:50</sys_updated_on>
+    </sys_metadata_delete>
+</record_update>
