@@ -1,5 +1,47 @@
+# Machine Learning on ServiceNow
+
+Perform your Machine Learning on any table inside ServiceNow and store the model for prediction at later stages. 
+
+Go to portal page - https://{instance-name}.service-now.com/machine_learning/?id=ml_template_page
+
+`Step 1` : Choose table
+
+<img src="images/1.PNG" width="800">
+
+`Step 2` : Select Training Data and Output Data
+
+<img src="images/2.PNG" width="800">
+
+`Step3` : Select No. of Test Records to calculate accuracy. Also if you want to convert any labeled column to numerical one, use converters field. Use JavaScript in converters in the shown format.
+
+<img src="images/3.PNG" width="800">
+
+`Step 4` : Use charts to get insights from data
+
+<img src="images/4.PNG" width="800">
+
+`Step 5` : Select Algorithm, set learning rate, iterations and batch size and click train.
+
+<img src="images/5.PNG" width="800">
+
+`Step 6` : Wait for model to get trained and see the accuracy. 
+
+<img src="images/6.PNG" width="800">
+
+`Step 7` : Then save the model using Save Model button.
+
+<img src="images/7.PNG" width="800">
+
+`Step 8` : See the saved model inside the servicenow application menu and click 'preview usage script' to get the code for use inside other scripts like Script Include, Business Rules etc. 
+
+<img src="images/8.PNG" width="800">
+
+
+
 # Generated files
 This repository contains generated files and a checksum.
+
+**Do not edit the files in this repository outside of an instance of ServiceNow.**
 
 If you find yourself unable to import your repository due to the presence of files edited outside an instance of ServiceNow, merge commits that mix files from different revisions, or other data that does not match the checksum, you may recover using either of the following techniques:
 * Remove the problem commits:
@@ -16,12 +58,3 @@ If you find yourself unable to import your repository due to the presence of fil
   4. Run `git add -A`
   5. Run `git commit`
   6. Run `git push`
-
- **Notes on dependencies**
-  1. Dependencies will not show up in the list of changes but will be exported/imported
-  2. It is your responsibility to resolve the dependencies before installing an application. ServiceNow source control will not manage these for you. In case you installed an application before installing its dependencies:
-   2.1 Delete the application
-   2.2 Activate/install all required dependencies
-   2.3 Re-import the application from source control
-   Currently listed dependencies:
-   * System Import Sets
