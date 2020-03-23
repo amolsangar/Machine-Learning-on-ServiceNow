@@ -2,6 +2,8 @@
 
 Perform your Machine Learning on any table inside ServiceNow and store the model for prediction at later stages. 
 
+Go to portal page - https://{instance-name}.service-now.com/machine_learning/?id=ml_template_page
+
 `Step 1` : Choose table
 
 <img src="images/1.PNG" width="800">
@@ -26,7 +28,7 @@ Perform your Machine Learning on any table inside ServiceNow and store the model
 
 <img src="images/7.PNG" width="800">
 
-`Step 7` : See the saved model inside the servicenow application menu and click 'preview usage script' to get the code for use inside other scripts. 
+`Step 7` : See the saved model inside the servicenow application menu and click 'preview usage script' to get the code for use inside other scripts like Script Include, Business Rules etc. 
 
 <img src="images/8.PNG" width="800">
 
